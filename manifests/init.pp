@@ -30,10 +30,10 @@ class bind {
 	concatenated_file_part {
 		legacy_include:
 			dir => "/var/lib/puppet/modules/bind/options.d",
-			content => "include \"/var/local/puppet/bind/edv-bus/config/master.conf\";\n"
+			content => "include \"/var/local/puppet/bind/edv-bus/config/master.conf\";\n",
 	}
 
-	File <<| tags == 'bind' |>>
+	File <<| tag == 'bind' |>>
 }
 
 # use $domain if namevar is needed for disabiguation
@@ -75,11 +75,15 @@ define bind::zone_file($ensure = 'present', $content = '', $source = '', $master
 	}
 	$registration_file = "/var/lib/puppet/modules/bind/${name}/${ns_type}/${bind_bindaddress}"
 
-	modules_dir { [ "bind/${name}", "bind/${name}/masters", "bind/${name}/slaves", "bind/${name}/rrs" ] : }
+	modules_dir {
+		[ "bind/${name}", "bind/${name}/masters", "bind/${name}/slaves", "bind/${name}/rrs" ] :
+			tag => 'bind'
+		}
 	
 	@@config_file { $registration_file:
 		ensure  => $ensure,
 		content => "${bind_bindaddress};\n",
+		tag => 'bind'
 	}
 
 	if $master {
