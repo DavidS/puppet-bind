@@ -23,6 +23,9 @@ options {
 	when "" -%>
 	<% else -%>
 	listen-on { <%= bind_bindaddress %>; };
+	notify-source <%= bind_bindaddress %>;
+	transfer-source <%= bind_bindaddress %>;
+	query-source address <%= bind_bindaddress %>;
 	<% end -%>
 
 	// listen-on-v6 { any; };
