@@ -2,7 +2,7 @@
 # Copyright (c) 2007 David Schmitt <david@schmitt.edv-bus.at>
 # See LICENSE for the full license granted to you.
 
-modules_dir { [ "bind", "bind/zones" ]: }
+modules_dir { [ "bind", "bind/zones", "bind/options.d" ]: }
 
 class bind {
 	
