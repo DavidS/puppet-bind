@@ -33,7 +33,7 @@ class bind {
 			content => "include \"/var/local/puppet/bind/edv-bus/config/master.conf\";\n",
 	}
 
-	File <<| tag == 'bind' |>>
+	Config_file <<| tag == 'bind' |>>
 }
 
 # use $domain if namevar is needed for disabiguation
