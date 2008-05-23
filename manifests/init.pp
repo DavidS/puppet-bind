@@ -37,7 +37,7 @@ class bind {
 }
 
 # use $domain if namevar is needed for disabiguation
-define nagios2::check_dig2($domain = '', $record_type = 'A', $expected_address = '',
+define nagios::check_domain($domain = '', $record_type = 'SOA', $expected_address = '',
 		$target_host = $fqdn)
 {
 	$diggit = $domain ? {
@@ -45,10 +45,17 @@ define nagios2::check_dig2($domain = '', $record_type = 'A', $expected_address =
 		default => $domain
 	}
 
-	$real_name = "check_dig2_${diggit}_${record_type}"
-	nagios2::service{ $real_name:
-		check_command => "check_dig2!$diggit!$record_type!$expected_address",
-		nagios2_host_name => $target_host,
+	$real_name = "check_dig3_${diggit}_${record_type}"
+	if $bind_bindaddress {
+		nagios2::service{ $real_name:
+			check_command => "check_dig3!$diggit!$record_type!$bind_bindaddress!$expected_address",
+			nagios2_host_name => $target_host,
+		}
+	} else {
+		nagios2::service{ $real_name:
+			check_command => "check_dig2!$diggit!$record_type!$expected_address",
+			nagios2_host_name => $target_host,
+		}
 	}
 }
 
@@ -85,6 +92,8 @@ define bind::zone_file($ensure = 'present', $content = '', $source = '', $master
 		content => "${bind_bindaddress};\n",
 		tag => 'bind'
 	}
+
+	nagios::check_domain { $name: }
 
 	if $master {
 
@@ -134,6 +143,7 @@ define bind::zone_file($ensure = 'present', $content = '', $source = '', $master
 				footer => $conf_footer,
 				notify => Exec["concat_/etc/bind/named.conf.local"]
 		}
+
 	}
 
 }
