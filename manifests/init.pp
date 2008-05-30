@@ -62,7 +62,7 @@ define nagios::check_domain($domain = '', $record_type = 'SOA', $expected_addres
 }
 
 define bind::zone_file($ensure = 'present', $content = '', $source = '', $master = false, $public = true) {
-	err ("deprecated");
+	err ("deprecated")
 	include bind
 
 	if $master {
@@ -155,7 +155,7 @@ define bind::soa(
 	$ensure = 'present',
 	$refresh = 7200, $retry = 3600, $expire = 604800, $minimum = 600)
 {
-	err ("deprecated");
+	err ("deprecated")
 	$zone_file    = "/var/lib/puppet/modules/bind/zones/${name}"
 	$rrs_dir      = "/var/lib/puppet/modules/bind/${name}/rrs"
 	config_file {
@@ -171,7 +171,7 @@ define bind::rr(
 	$ensure = 'present',
 	$content)
 {
-	err ("deprecated");
+	err ("deprecated")
 	$zone_file    = "/var/lib/puppet/modules/bind/zones/${domain}"
 	$rrs_dir      = "/var/lib/puppet/modules/bind/${domain}/rrs"
 	config_file {
