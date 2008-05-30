@@ -2,6 +2,8 @@
 # Copyright (c) 2007 David Schmitt <david@schmitt.edv-bus.at>
 # See LICENSE for the full license granted to you.
 
+import "zone.pp"
+
 modules_dir { [ "bind", "bind/zones", "bind/options.d" ]: }
 
 class bind {
@@ -60,7 +62,7 @@ define nagios::check_domain($domain = '', $record_type = 'SOA', $expected_addres
 }
 
 define bind::zone_file($ensure = 'present', $content = '', $source = '', $master = false, $public = true) {
-
+	err ("deprecated");
 	include bind
 
 	if $master {
@@ -106,13 +108,13 @@ define bind::zone_file($ensure = 'present', $content = '', $source = '', $master
 		}
 		config_file { 
 			$zone_header:
-				content => "\$ORIGIN ${name}.\n\$TTL 86400\n\n",
-				notify => Exec["concat_${zone_file}"];
+				content => "\$ORIGIN ${name}.\n\$TTL 86400\n\n";
+				#TODO: notify => Exec["concat_${zone_file}"];
 			$content_file:
 				ensure => $ensure,
 				content => $content,
 				source => $source,
-				notify => Exec["concat_${zone_file}"]
+				#TODO: notify => Exec["concat_${zone_file}"]
 		}
 
 		concatenated_file_part {
@@ -153,20 +155,23 @@ define bind::soa(
 	$ensure = 'present',
 	$refresh = 7200, $retry = 3600, $expire = 604800, $minimum = 600)
 {
+	err ("deprecated");
 	$zone_file    = "/var/lib/puppet/modules/bind/zones/${name}"
 	$rrs_dir      = "/var/lib/puppet/modules/bind/${name}/rrs"
 	config_file {
 		"${rrs_dir}/00_soa":
 			ensure => $ensure,
 			content => "${name}.		SOA ${primary} ${hostmaster} ( ${serial} ${refresh} ${retry} ${expire} ${minimum} )\n",
-			notify => Exec["concat_${zone_file}"]
+			# notify => Exec["concat_${zone_file}"]
 	}
 }
+
 define bind::rr(
 	$domain,
 	$ensure = 'present',
 	$content)
 {
+	err ("deprecated");
 	$zone_file    = "/var/lib/puppet/modules/bind/zones/${domain}"
 	$rrs_dir      = "/var/lib/puppet/modules/bind/${domain}/rrs"
 	config_file {
