@@ -91,7 +91,7 @@ define bind::ns2($rrname = '', $domain, $nsname, $ttl = '') {
 			domain => $domain,
 			type => 'NS',
 			ttl => $ttl,
-			data => $nsname,
+			data => "${nsname}.",
 	}
 
 }
@@ -105,7 +105,7 @@ define bind::mx2($rrname, $domain, $priority, $mx, $ttl = '') {
 			domain => $domain,
 			type => 'MX',
 			ttl => $ttl,
-			data => "${priority} ${xm}.",
+			data => "${priority} ${mx}.",
 	}
 
 }
@@ -134,7 +134,7 @@ define bind::cname2($rrname, $domain, $cname, $ttl = '') {
 			domain => $domain,
 			type => 'CNAME',
 			ttl => $ttl,
-			data => $cname,
+			data => "${cname}.",
 	}
 
 }
