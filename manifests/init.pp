@@ -118,7 +118,7 @@ define bind::zone_file($ensure = 'present', $content = '', $source = '', $master
 		}
 
 		concatenated_file_part {
-			"zone_conf_${name}":
+			"legacy_zone_conf_${name}":
 				dir => "/var/lib/puppet/modules/bind/options.d",
 				content => "zone \"${name}\" { type master; file \"/var/lib/puppet/modules/bind/zones/${name}\"; };\n"
 		}

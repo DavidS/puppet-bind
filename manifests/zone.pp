@@ -96,7 +96,7 @@ define bind::ns2($rrname = '', $domain, $nsname, $ttl = '') {
 
 }
 
-# namevar should contain ${domain} and ${mx}
+# namevar should contain ${rrname}, ${domain} and ${mx}
 define bind::mx2($rrname, $domain, $priority, $mx, $ttl = '') {
 
 	bind::rr2{
@@ -110,7 +110,7 @@ define bind::mx2($rrname, $domain, $priority, $mx, $ttl = '') {
 
 }
 
-# namevar should contain ${domain} and ${ip}
+# namevar should contain ${rrname}, ${domain} and ${ip}
 define bind::a2($rrname, $domain, $ip, $ttl = '') {
 
 	bind::rr2{
@@ -120,6 +120,21 @@ define bind::a2($rrname, $domain, $ip, $ttl = '') {
 			type => 'A',
 			ttl => $ttl,
 			data => $ip,
+	}
+
+}
+
+# namevar should contain ${rrname} and ${domain}, since there can only be one
+# CNAME on a rrname
+define bind::cname2($rrname, $domain, $cname, $ttl = '') {
+
+	bind::rr2{
+		"${name}_CNAME":
+			rrname => $rrname,
+			domain => $domain,
+			type => 'CNAME',
+			ttl => $ttl,
+			data => $cname,
 	}
 
 }
