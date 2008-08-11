@@ -7,6 +7,7 @@ $zone_conf_d = "/var/lib/puppet/modules/bind/zone/conf.d"
 # include this class to collect and configure all defined zones
 class bind::master {
 	modules_dir { [ "bind/zone", "bind/zone/conf.d", "bind/zone/contents", "bind/zone/contents.d" ]: }
+	include bind
 
 	# todo: fix this!
 	# Concatenated_file <<| tag == 'bind::master' |>>
@@ -20,29 +21,41 @@ class bind::master {
 			dir => $zone_conf_d;
 	}
 
+	concatenated_file_part {
+		include_master_zones:
+			dir => "/var/lib/puppet/modules/bind/options.d",
+			content => "include \"/var/lib/puppet/modules/bind/zone/zone_list.conf\";\n",
+	}
+
+
 }
 
 # top-level define for a DNS zone. Use this to export the basic structures to
 # your bind::master
-define bind::zone() {
+define bind::zone($ensure = 'present') {
 
-	$zone_file = "/var/lib/puppet/modules/bind/zone/contents/${name}"
-	$zone_contents_d = "/var/lib/puppet/modules/bind/zone/contents.d/${name}"
-
-	# create the infrastructure for receiving parts of the zone
-	err("Tagging $zone_file: bind::master")
-	@@concatenated_file {
-		$zone_file:
-			dir => $zone_contents_d,
-			tag => 'bind::master';
-	}
-
-	# add the zone to the list of active zones
-	@@concatenated_file_part {
-		"zone_conf_${name}":
-			dir => $zone_conf_d,
-			content => "zone \"${name}\" { type master; file \"${zone_file}\"; };\n",
-			tag => 'bind::master';
+	case $ensure {
+		'present': {
+			$zone_file = "/var/lib/puppet/modules/bind/zone/contents/${name}"
+			$zone_contents_d = "/var/lib/puppet/modules/bind/zone/contents.d/${name}"
+			
+			# create the infrastructure for receiving parts of the zone
+			err("Tagging $zone_file: bind::master")
+			@@concatenated_file {
+				$zone_file:
+					dir => $zone_contents_d,
+					tag => 'bind::master';
+			}
+		
+			# add the zone to the list of active zones
+			@@concatenated_file_part {
+				"zone_conf_${name}":
+					dir => $zone_conf_d,
+					content => "zone \"${name}\" { type master; file \"${zone_file}\"; };\n",
+					tag => 'bind::master';
+			}
+		}
+		'absent': {}
 	}
 
 }
@@ -53,8 +66,10 @@ define bind::rr2($rrname, $domain, $type, $ttl = '', $data)
 	$fqrrname = $rrname ? { '' => "${domain}.", default => "${rrname}.${domain}." }
 	$zone_contents_d = "/var/lib/puppet/modules/bind/zone/contents.d/${domain}"
 
+	$order = $type ? { soa => '00', default => '50' }
+
 	@@concatenated_file_part {
-		"${fqrrname}_${fqdn}_${name}":
+		"${order}_${fqrrname}_${fqdn}_${name}":
 			dir => $zone_contents_d,
 			content => "${fqrrname} ${ttl} ${type} ${data}\n",
 			tag => 'bind::master';
