@@ -68,6 +68,10 @@ define bind::rr2($rrname, $domain, $type, $ttl = '', $data)
 
 	$order = $type ? { soa => '00', default => '50' }
 
+	case $data {
+		'': { fail("no data given for rr") }
+	}
+
 	@@concatenated_file_part {
 		"${order}_${fqrrname}_${fqdn}_${name}":
 			dir => $zone_contents_d,
