@@ -4,9 +4,9 @@
 
 import "zone.pp"
 
-modules_dir { [ "bind", "bind/zones", "bind/options.d" ]: }
-
 class bind {
+
+	module_dir { [ "bind", "bind/zones", "bind/options.d" ]: }
 	
 	package { [ "bind9", "dnsutils" ]: ensure => installed }
 
@@ -26,12 +26,12 @@ class bind {
 
 	concatenated_file {
 		"/etc/bind/named.conf.local":
-			dir => "/var/lib/puppet/modules/bind/options.d",
+			dir => "${module_dir_path}/bind/options.d",
 	}
 	
 	concatenated_file_part {
 		legacy_include:
-			dir => "/var/lib/puppet/modules/bind/options.d",
+			dir => "${module_dir_path}/bind/options.d",
 			content => "include \"/var/local/puppet/bind/edv-bus/config/master.conf\";\n",
 	}
 

@@ -2,11 +2,13 @@
 # Copyright (c) 2008 David Schmitt <david@schmitt.edv-bus.at>
 # See LICENSE for the full license granted to you.
 
-$zone_conf_d = "/var/lib/puppet/modules/bind/zone/conf.d"
+$zone_conf_d = "${module_dir_path}/bind/zone/conf.d"
 
 # include this class to collect and configure all defined zones
 class bind::master {
-	modules_dir { [ "bind/zone", "bind/zone/conf.d", "bind/zone/contents", "bind/zone/contents.d" ]: }
+
+	module_dir { [ "bind/zone", "bind/zone/conf.d", "bind/zone/contents", "bind/zone/contents.d" ]: }
+
 	include bind
 
 	# todo: fix this!
@@ -17,14 +19,14 @@ class bind::master {
 	Concatenated_file_part <<| |>>
 
 	concatenated_file {
-		"/var/lib/puppet/modules/bind/zone/zone_list.conf":
+		"${module_dir_path}/bind/zone/zone_list.conf":
 			dir => $zone_conf_d;
 	}
 
 	concatenated_file_part {
 		include_master_zones:
-			dir => "/var/lib/puppet/modules/bind/options.d",
-			content => "include \"/var/lib/puppet/modules/bind/zone/zone_list.conf\";\n",
+			dir => "${module_dir_path}/bind/options.d",
+			content => "include \"${module_dir_path}/bind/zone/zone_list.conf\";\n",
 	}
 
 
@@ -36,8 +38,8 @@ define bind::zone($ensure = 'present') {
 
 	case $ensure {
 		'present': {
-			$zone_file = "/var/lib/puppet/modules/bind/zone/contents/${name}"
-			$zone_contents_d = "/var/lib/puppet/modules/bind/zone/contents.d/${name}"
+			$zone_file = "${module_dir_path}/bind/zone/contents/${name}"
+			$zone_contents_d = "${module_dir_path}/bind/zone/contents.d/${name}"
 			
 			# create the infrastructure for receiving parts of the zone
 			err("Tagging $zone_file: bind::master")
@@ -64,7 +66,7 @@ define bind::zone($ensure = 'present') {
 define bind::rr2($rrname, $domain, $type, $ttl = '', $data)
 {
 	$fqrrname = $rrname ? { '' => "${domain}.", default => "${rrname}.${domain}." }
-	$zone_contents_d = "/var/lib/puppet/modules/bind/zone/contents.d/${domain}"
+	$zone_contents_d = "${module_dir_path}/bind/zone/contents.d/${domain}"
 
 	$order = $type ? { soa => '00', default => '50' }
 
