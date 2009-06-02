@@ -11,12 +11,8 @@ class bind::master {
 
 	include bind
 
-	# todo: fix this!
-	# Concatenated_file <<| tag == 'bind::master' |>>
-	# Concatenated_file_part <<| tag == 'bind::master' |>>
-
-	Concatenated_file <<| |>>
-	Concatenated_file_part <<| |>>
+	Concatenated_file <<| tag == 'bind::master' |>>
+	Concatenated_file_part <<| tag == 'bind::master' |>>
 
 	concatenated_file {
 		"${module_dir_path}/bind/zone/zone_list.conf":
@@ -42,7 +38,6 @@ define bind::zone($ensure = 'present') {
 			$zone_contents_d = "${module_dir_path}/bind/zone/contents.d/${name}"
 			
 			# create the infrastructure for receiving parts of the zone
-			err("Tagging $zone_file: bind::master")
 			@@concatenated_file {
 				$zone_file:
 					dir => $zone_contents_d,
