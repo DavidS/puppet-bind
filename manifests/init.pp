@@ -17,7 +17,7 @@ class bind {
 		subscribe => Exec["concat_/etc/bind/named.conf.local"]
 	}
 
-	nagios2::service { "check_dns": }
+	nagios::service { "check_dns": }
 
 	config_file { "/etc/bind/named.conf.options":
 		content => template( "bind/named.conf.options.erb"),
@@ -49,14 +49,14 @@ define nagios::check_domain($domain = '', $record_type = 'SOA', $expected_addres
 
 	$real_name = "check_dig3_${diggit}_${record_type}"
 	if $bind_bindaddress {
-		nagios2::service{ $real_name:
+		nagios::service{ $real_name:
 			check_command => "check_dig3!$diggit!$record_type!$bind_bindaddress!$expected_address",
-			nagios2_host_name => $target_host,
+			nagios_host_name => $target_host,
 		}
 	} else {
-		nagios2::service{ $real_name:
+		nagios::service{ $real_name:
 			check_command => "check_dig2!$diggit!$record_type!$expected_address",
-			nagios2_host_name => $target_host,
+			nagios_host_name => $target_host,
 		}
 	}
 }
