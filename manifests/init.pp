@@ -40,6 +40,7 @@ class bind (
   $dir_source = undef,
   $dir_purge  = false,
   $dir_recurse                = true,
+  $zones_dir  = undef,
   $dependency_class           = 'bind::dependencies',
   $monitor_class              = 'bind::monitor',
   $firewall_class             = 'bind::firewall',
@@ -96,6 +97,8 @@ class bind (
   #    },
   #    default => $bind::dir,
   #  }
+
+  $managed_zones_dir = pick($bind::zones_dir, "${bind::dir}/zones")
 
   # Resources Managed
   class {

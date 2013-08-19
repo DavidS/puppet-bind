@@ -31,6 +31,14 @@ class bind::configuration {
       purge   => $bind::dir_purge,
       force   => $bind::dir_purge,
     }
+
+    file { 'bind_zones.dir':
+      ensure => $bind::dir_ensure,
+      path   => $bind::managed_zones_dir,
+      mode   => $bind::config_file_mode,
+      owner  => $bind::config_file_owner,
+      group  => $bind::config_file_group,
+    }
   }
 
   if $bind::init_options_file {
