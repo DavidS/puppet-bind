@@ -1,4 +1,6 @@
 class bind::dependencies {
   # always handy
-  package { 'dnsutils': ensure => installed; }
+  if (!defined(Package["dnsutils"])) {
+    package { 'dnsutils': ensure => installed; }
+  }
 }
